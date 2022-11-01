@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "pyasic-api"
+version = "0.1.0"
+description = ""
+authors = ["UpstreamData <brett@upstreamdata.ca>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pyasic = "^0.19.0"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+pyasic = { path = "../pyasic/", develop = true }
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
