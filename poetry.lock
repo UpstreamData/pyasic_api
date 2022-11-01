@@ -159,19 +159,14 @@ version = "0.19.0"
 description = "A set of modules for interfacing with many common types of ASIC bitcoin miners, using both their API and SSH."
 category = "main"
 optional = false
-python-versions = "^3.9"
-develop = true
+python-versions = ">=3.9,<4.0"
 
 [package.dependencies]
-asyncssh = "^2.11.0"
-httpx = "^0.23.0"
-passlib = "^1.7.4"
-pyaml = "^21.10.1"
-toml = "^0.10.2"
-
-[package.source]
-type = "directory"
-url = "../pyasic"
+asyncssh = ">=2.11.0,<3.0.0"
+httpx = ">=0.23.0,<0.24.0"
+passlib = ">=1.7.4,<2.0.0"
+pyaml = ">=21.10.1,<22.0.0"
+toml = ">=0.10.2,<0.11.0"
 
 [[package]]
 name = "pycparser"
@@ -230,7 +225,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "211cf1c1f39beca65e6e114702d6ce7f02f36f6dde3809e12e3d625330804f3b"
+content-hash = "955f084f87745a6c4de58676153b07e2a94d5cbc6287aeba94f36fc5c64d4684"
 
 [metadata.files]
 anyio = [
@@ -363,7 +358,10 @@ pyaml = [
     {file = "pyaml-21.10.1-py2.py3-none-any.whl", hash = "sha256:19985ed303c3a985de4cf8fd329b6d0a5a5b5c9035ea240eccc709ebacbaf4a0"},
     {file = "pyaml-21.10.1.tar.gz", hash = "sha256:c6519fee13bf06e3bb3f20cacdea8eba9140385a7c2546df5dbae4887f768383"},
 ]
-pyasic = []
+pyasic = [
+    {file = "pyasic-0.19.0-py3-none-any.whl", hash = "sha256:fe88a4f0251a7481475066049794e66da143627b6224a4c654c4700783af7fdc"},
+    {file = "pyasic-0.19.0.tar.gz", hash = "sha256:0723aeb2713a43079a2aafa8fbd80de4046ade586471ccb83288f7af39db225f"},
+]
 pycparser = [
     {file = "pycparser-2.21-py2.py3-none-any.whl", hash = "sha256:8ee45429555515e1f6b185e78100aea234072576aa43ab53aefcae078162fca9"},
     {file = "pycparser-2.21.tar.gz", hash = "sha256:e644fdec12f7872f86c58ff790da456218b10f863970249516d60a5eaca77206"},
