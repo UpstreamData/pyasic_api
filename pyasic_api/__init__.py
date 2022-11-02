@@ -1,12 +1,7 @@
-from fastapi import FastAPI
 import uvicorn
+from pyasic_api.app import app
+import pyasic_api.get
+import pyasic_api.post
 
-app = FastAPI()
-
-
-@app.get("/")
-async def root():
-    return {"msg": "Welcome to pyasic-API"}
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=4028)
