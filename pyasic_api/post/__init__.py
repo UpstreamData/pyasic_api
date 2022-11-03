@@ -30,7 +30,7 @@ def _create_network(constructor) -> list:
 
 
 class DataSelector(BaseModel):
-    constructor: Union[List[str], str] = "192.168.1.1-192.168.1.255"
+    targets: Union[List[str], str] = "192.168.1.1-192.168.1.255"
     data_selectors: Union[List[str], None] = None
 
 
@@ -38,10 +38,10 @@ class DataSelector(BaseModel):
 async def get_data(data_selector: DataSelector):
     """Get data from all miners as defined by the selector.
 
-    - ### constructor:
-        - A constructor to select the miners with.  This uses
+    - ### targets:
+        - A set of target IPs to query against.  This uses
         [`pyasic.MinerNetwork`](https://pyasic.readthedocs.io/en/latest/network/miner_network/)
-        to scan for miners and uses the same constructor format.  Constructor can be a string
+        to scan for miners and uses the same constructor format.  Targets can be a string
         formatted as {ip_1}-{ip_2} which will select all IP addresses in that range, or a string
         with a single ip address, or a list of any combination of these.
     - ### data_selectors:
@@ -52,14 +52,14 @@ async def get_data(data_selector: DataSelector):
     if data_selector.data_selectors == ["string"]:
         data_selectors = None
     try:
-        hosts = create_hosts(data_selector.constructor)
+        hosts = create_hosts(data_selector.targets)
     except ValueError:
         raise HTTPException(status_code=400, detail="Bad constructor string")
 
     miners = await MinerNetwork(hosts).scan_network_for_miners()
     data = await asyncio.gather(*[miner.get_data() for miner in miners])
 
-    ret_data = []
+    ret_data = {}
     for item in data:
         miner_data = {}
         if data_selector.data_selectors:
@@ -68,7 +68,7 @@ async def get_data(data_selector: DataSelector):
                     miner_data[dp] = item[dp]
                 except KeyError:
                     raise HTTPException(status_code=400, detail=f"Bad data point: {dp}")
-            ret_data.append(miner_data)
+            ret_data[item['ip']] = miner_data
         else:
-            ret_data.append(item.asdict())
+            ret_data[item['ip']] = item.asdict()
     return ret_data
