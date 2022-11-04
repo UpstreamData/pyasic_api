@@ -130,61 +130,24 @@ led_responses = {
 async def leds(ip, led_mode: LEDMode):
     miner = await get_miner(ip)
     light_status = await miner.check_light()
-    if led_mode is LEDMode.status: True
+    if led_mode is LEDMode.status:
+        return {"light_status": light_status}
     elif led_mode is LEDMode.toggle:
         if light_status:
-            await miner.fault_light_off()
-            light_status = False
+            if await miner.fault_light_off():
+                return {"light_status": not light_status}
         else:
-            await miner.fault_light_on()
-            light_status = True
+            if await miner.fault_light_on():
+                return {"light_status": not light_status}
+        # if the light fails to toggle, light status is the same.
+        # could also raise HTTP error here
+        return {"light_status": light_status}
     elif led_mode is LEDMode.on:
-        await miner.fault_light_on()
-        light_status = True
+        if await miner.fault_light_on():
+            return {"light_status": True}
+        raise HTTPException(status_code=400, detail="Miner failed to activate LED.")
     elif led_mode is LEDMode.off:
-        await miner.fault_light_off()
-        light_status = False
-    else: True
-    return {"light_status": light_status,}
+        if await miner.fault_light_off():
+            return {"light_status": False}
+        raise HTTPException(status_code=400, detail="Miner failed to deactivate LED.")
 
-'''
-@router.get("/{ip}/led_toggle/", summary="Toggle the indicator LED status")
-async def get_toggle_led(ip):
-    miner = await get_miner(ip)
-    light_status = await miner.check_light()
-    if light_status:
-        await miner.fault_light_off()
-        light_status = False
-    else:
-        await miner.fault_light_on()
-        light_status = True
-    return {
-        "light_status": light_status,
-    }
-
-@router.get("/{ip}/led_status/", summary="Query the indicator LED status")
-async def get_toggle_led(ip):
-    miner = await get_miner(ip)
-    light_status = await miner.check_light()
-    return {
-        "light_status": light_status,
-    }
-
-@router.get("/{ip}/led_on/", summary="Set the indicator LED status to on")
-async def get_toggle_led(ip):
-    miner = await get_miner(ip)
-    await miner.fault_light_on()
-    light_status = await miner.check_light()
-    return {
-        "light_status": light_status,
-    }
-
-@router.get("/{ip}/led_off/", summary="Set the indicator LED status to off")
-async def get_toggle_led(ip):
-    miner = await get_miner(ip)
-    await miner.fault_light_off()
-    light_status = await miner.check_light()
-    return {
-        "light_status": light_status,
-    }
-'''
