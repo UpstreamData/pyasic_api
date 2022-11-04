@@ -1,6 +1,7 @@
 from pyasic import get_miner
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from enum import Enum
+
 
 class LEDMode(str, Enum):
     on = "on"
@@ -8,7 +9,9 @@ class LEDMode(str, Enum):
     toggle = "toggle"
     status = "status"
 
+
 router = APIRouter(tags=["GET"])
+
 
 @router.get("/{ip}/get_data/", summary="Get data from one miner")
 async def get_ip_data(ip):
@@ -17,19 +20,26 @@ async def get_ip_data(ip):
     return data.asdict()
 
 
-hashrate_resp = {200:
-                 {"description": "Success",
-                  "content": {
-                    "application/json": {
-                      "example": {
-                        "hashrate":91.83,
-                        "left_board_hashrate":30.22,
-                        "center_board_hashrate":29.52,
-                        "right_board_hashrate":30.59}}}}}
+hashrate_resp = {
+    200: {
+        "description": "Success",
+        "content": {
+            "application/json": {
+                "example": {
+                    "hashrate": 91.83,
+                    "left_board_hashrate": 30.22,
+                    "center_board_hashrate": 29.52,
+                    "right_board_hashrate": 30.59,
+                }
+            }
+        },
+    }
+}
 
-@router.get("/{ip}/hashrate/",
-            summary="Get hashrate from one miner",
-            responses=hashrate_resp)
+
+@router.get(
+    "/{ip}/hashrate/", summary="Get hashrate from one miner", responses=hashrate_resp
+)
 async def get_ip_data(ip):
     miner = await get_miner(ip)
     data = await miner.get_data()
@@ -103,6 +113,7 @@ async def get_ip_data(ip):
         "ideal_chips": data.ideal_chips,
     }
 
+
 led_responses = {
     200: {
         "description": "Success",
@@ -111,22 +122,29 @@ led_responses = {
                 "examples": {
                     "on": {
                         "summary": "Light Is On",
-                        "value": {"light_status": True, }
+                        "value": {
+                            "light_status": True,
+                        },
                     },
                     "off": {
                         "summary": "Light is Off",
-                        "value": {"light_status": False, }
+                        "value": {
+                            "light_status": False,
+                        },
                     },
                 }
             }
-        }
+        },
     },
 }
 
-@router.get("/{ip}/led/{led_mode}/",
+
+@router.get(
+    "/{ip}/led/{led_mode}/",
     summary="Check, toggle, or set the indicator LED state.",
     response_description="The state of the LED following this operation.",
-    responses=led_responses)
+    responses=led_responses,
+)
 async def leds(ip, led_mode: LEDMode):
     miner = await get_miner(ip)
     light_status = await miner.check_light()
@@ -150,4 +168,3 @@ async def leds(ip, led_mode: LEDMode):
         if await miner.fault_light_off():
             return {"light_status": False}
         raise HTTPException(status_code=400, detail="Miner failed to deactivate LED.")
-

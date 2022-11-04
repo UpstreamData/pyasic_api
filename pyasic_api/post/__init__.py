@@ -3,10 +3,12 @@ from typing import Union, List
 
 from fastapi import HTTPException, APIRouter
 from pydantic import BaseModel
+from enum import Enum
 
 from pyasic import MinerNetwork, MinerData
 
 router = APIRouter(tags=["POST"])
+
 
 def create_hosts(ip_constructor) -> list:
     hosts = []
@@ -29,9 +31,14 @@ def _create_network(constructor) -> list:
     return hosts
 
 
+MinerDataSelector = Enum(
+    "MinerDataSelector", {key: key for key in MinerData("1.1.1.1")}
+)
+
+
 class DataSelector(BaseModel):
     targets: Union[List[str], str] = "192.168.1.1-192.168.1.255"
-    data_selectors: Union[List[str], None] = None
+    data_selectors: Union[List[MinerDataSelector], None] = None
 
 
 @router.post("/get_data/", summary="Get data from selected miners")
@@ -68,7 +75,7 @@ async def get_data(data_selector: DataSelector):
                     miner_data[dp] = item[dp]
                 except KeyError:
                     raise HTTPException(status_code=400, detail=f"Bad data point: {dp}")
-            ret_data[item['ip']] = miner_data
+            ret_data[item["ip"]] = miner_data
         else:
-            ret_data[item['ip']] = item.asdict()
+            ret_data[item["ip"]] = item.asdict()
     return ret_data
