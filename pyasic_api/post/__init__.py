@@ -56,8 +56,6 @@ async def get_data(data_selector: DataSelector):
         all data will be returned.  Selectable items are all items contained by
         [`pyasic.MinerData`](https://pyasic.readthedocs.io/en/latest/data/miner_data/).
     """
-    if data_selector.data_selectors == ["string"]:
-        data_selectors = None
     try:
         hosts = create_hosts(data_selector.targets)
     except ValueError:
