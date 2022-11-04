@@ -1,5 +1,12 @@
 from pyasic import get_miner
 from fastapi import APIRouter
+from enum import Enum
+
+class LEDMode(str, Enum):
+    on = "on"
+    off = "off"
+    toggle = "toggle"
+    status = "status"
 
 router = APIRouter(tags=["GET"])
 
@@ -10,7 +17,19 @@ async def get_ip_data(ip):
     return data.asdict()
 
 
-@router.get("/{ip}/hashrate/", summary="Get hashrate from one miner")
+hashrate_resp = {200:
+                 {"description": "Success",
+                  "content": {
+                    "application/json": {
+                      "example": {
+                        "hashrate":91.83,
+                        "left_board_hashrate":30.22,
+                        "center_board_hashrate":29.52,
+                        "right_board_hashrate":30.59}}}}}
+
+@router.get("/{ip}/hashrate/",
+            summary="Get hashrate from one miner",
+            responses=hashrate_resp)
 async def get_ip_data(ip):
     miner = await get_miner(ip)
     data = await miner.get_data()
@@ -83,3 +102,89 @@ async def get_ip_data(ip):
         "total_chips": data.total_chips,
         "ideal_chips": data.ideal_chips,
     }
+
+led_responses = {
+    200: {
+        "description": "Success",
+        "content": {
+            "application/json": {
+                "examples": {
+                    "on": {
+                        "summary": "Light Is On",
+                        "value": {"light_status": True, }
+                    },
+                    "off": {
+                        "summary": "Light is Off",
+                        "value": {"light_status": False, }
+                    },
+                }
+            }
+        }
+    },
+}
+
+@router.get("/{ip}/led/{led_mode}/",
+    summary="Check, toggle, or set the indicator LED state.",
+    response_description="The state of the LED following this operation.",
+    responses=led_responses)
+async def leds(ip, led_mode: LEDMode):
+    miner = await get_miner(ip)
+    light_status = await miner.check_light()
+    if led_mode is LEDMode.status: True
+    elif led_mode is LEDMode.toggle:
+        if light_status:
+            await miner.fault_light_off()
+            light_status = False
+        else:
+            await miner.fault_light_on()
+            light_status = True
+    elif led_mode is LEDMode.on:
+        await miner.fault_light_on()
+        light_status = True
+    elif led_mode is LEDMode.off:
+        await miner.fault_light_off()
+        light_status = False
+    else: True
+    return {"light_status": light_status,}
+
+'''
+@router.get("/{ip}/led_toggle/", summary="Toggle the indicator LED status")
+async def get_toggle_led(ip):
+    miner = await get_miner(ip)
+    light_status = await miner.check_light()
+    if light_status:
+        await miner.fault_light_off()
+        light_status = False
+    else:
+        await miner.fault_light_on()
+        light_status = True
+    return {
+        "light_status": light_status,
+    }
+
+@router.get("/{ip}/led_status/", summary="Query the indicator LED status")
+async def get_toggle_led(ip):
+    miner = await get_miner(ip)
+    light_status = await miner.check_light()
+    return {
+        "light_status": light_status,
+    }
+
+@router.get("/{ip}/led_on/", summary="Set the indicator LED status to on")
+async def get_toggle_led(ip):
+    miner = await get_miner(ip)
+    await miner.fault_light_on()
+    light_status = await miner.check_light()
+    return {
+        "light_status": light_status,
+    }
+
+@router.get("/{ip}/led_off/", summary="Set the indicator LED status to off")
+async def get_toggle_led(ip):
+    miner = await get_miner(ip)
+    await miner.fault_light_off()
+    light_status = await miner.check_light()
+    return {
+        "light_status": light_status,
+    }
+'''
