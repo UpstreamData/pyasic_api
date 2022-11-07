@@ -32,7 +32,7 @@ def _create_network(constructor) -> list:
 
 
 MinerDataSelector = Enum(
-    "MinerDataSelector", {key: key for key in MinerData("1.1.1.1")}
+    "MinerDataSelector", {f: f for f in MinerData.fields()}
 )
 
 
