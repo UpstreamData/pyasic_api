@@ -1,4 +1,4 @@
-from pyasic import get_miner
+from pyasic import get_miner, MinerData
 from fastapi import APIRouter, HTTPException
 from enum import Enum
 
@@ -13,7 +13,17 @@ class LEDMode(str, Enum):
 router = APIRouter(tags=["GET"])
 
 
-@router.get("/{ip}/get_data/", summary="Get data from one miner")
+get_data_resp = {
+    200: {
+        "description": "Success",
+        "content": {"application/json": {"example": MinerData("1.1.1.1").asdict()}},
+    }
+}
+
+
+@router.get(
+    "/{ip}/get_data/", summary="Get data from one miner", responses=get_data_resp
+)
 async def get_ip_data(ip):
     miner = await get_miner(ip)
     data = await miner.get_data()
@@ -40,7 +50,7 @@ hashrate_resp = {
 @router.get(
     "/{ip}/hashrate/", summary="Get hashrate from one miner", responses=hashrate_resp
 )
-async def get_ip_data(ip):
+async def get_ip_hr_data(ip):
     miner = await get_miner(ip)
     data = await miner.get_data()
     return {
@@ -51,8 +61,27 @@ async def get_ip_data(ip):
     }
 
 
-@router.get("/{ip}/fans/", summary="Get fans speeds from one miner")
-async def get_ip_data(ip):
+fans_resp = {
+    200: {
+        "description": "Success",
+        "content": {
+            "application/json": {
+                "example": {
+                    "fan_1": 6000,
+                    "fan_2": 6000,
+                    "fan_3": 6000,
+                    "fan_4": 6000,
+                }
+            }
+        },
+    }
+}
+
+
+@router.get(
+    "/{ip}/fans/", summary="Get fans speeds from one miner", responses=fans_resp
+)
+async def get_ip_fan_data(ip):
     miner = await get_miner(ip)
     data = await miner.get_data()
     ret_data = {
@@ -69,8 +98,41 @@ async def get_ip_data(ip):
     return ret_data
 
 
-@router.get("/{ip}/temps/", summary="Get temperatures from one miner")
-async def get_ip_data(ip):
+temps_resp = {
+    200: {
+        "description": "Success",
+        "content": {
+            "application/json": {
+                "example": {
+                    "boards": [
+                        {
+                            "slot": 0,
+                            "board_temp": 60,
+                            "chip_temp": 80,
+                        },
+                        {
+                            "slot": 1,
+                            "board_temp": 60,
+                            "chip_temp": 80,
+                        },
+                        {
+                            "slot": 2,
+                            "board_temp": 60,
+                            "chip_temp": 80,
+                        },
+                    ],
+                    "env_temp": 40,
+                }
+            }
+        },
+    }
+}
+
+
+@router.get(
+    "/{ip}/temps/", summary="Get temperatures from one miner", responses=temps_resp
+)
+async def get_ip_temp_data(ip):
     miner = await get_miner(ip)
     data = await miner.get_data()
     ret_data = {}
@@ -89,8 +151,28 @@ async def get_ip_data(ip):
     return ret_data
 
 
-@router.get("/{ip}/power/", summary="Get power usage information from one miner")
-async def get_ip_data(ip):
+power_resp = {
+    200: {
+        "description": "Success",
+        "content": {
+            "application/json": {
+                "example": {
+                    "wattage": 3450,
+                    "wattage_limit": 3500,
+                    "efficiency": 34.5,
+                }
+            }
+        },
+    }
+}
+
+
+@router.get(
+    "/{ip}/power/",
+    summary="Get power usage information from one miner",
+    responses=power_resp,
+)
+async def get_ip_power_data(ip):
     miner = await get_miner(ip)
     data = await miner.get_data()
     ret_data = {}
@@ -101,8 +183,39 @@ async def get_ip_data(ip):
     return ret_data
 
 
-@router.get("/{ip}/chips/", summary="Get chip counts from one miner")
-async def get_ip_data(ip):
+chips_resp = {
+    200: {
+        "description": "Success",
+        "content": {
+            "application/json": {
+                "example": {
+                    "boards": [
+                        {
+                            "slot": 0,
+                            "chips": 110,
+                        },
+                        {
+                            "slot": 1,
+                            "chips": 110,
+                        },
+                        {
+                            "slot": 2,
+                            "chips": 0,
+                        },
+                    ],
+                    "ideal_chips": 330,
+                    "total_chips": 220,
+                }
+            }
+        },
+    }
+}
+
+
+@router.get(
+    "/{ip}/chips/", summary="Get chip counts from one miner", responses=chips_resp
+)
+async def get_ip_chips_data(ip):
     miner = await get_miner(ip)
     data = await miner.get_data()
     return {
@@ -112,6 +225,31 @@ async def get_ip_data(ip):
         "total_chips": data.total_chips,
         "ideal_chips": data.ideal_chips,
     }
+
+
+errors_resp = {
+    200: {
+        "description": "Success",
+        "content": {
+            "application/json": {
+                "example": {
+                    "errors": [
+                        {"error_code": 2320, "error_message": "Hashrate is too low."}
+                    ]
+                }
+            }
+        },
+    }
+}
+
+
+@router.get(
+    "/{ip}/errors/", summary="Get error data from one miner", responses=errors_resp
+)
+async def get_ip_error_data(ip):
+    miner = await get_miner(ip)
+    errors = await miner.get_errors()
+    return {"errors": errors}
 
 
 led_responses = {

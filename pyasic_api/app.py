@@ -4,7 +4,7 @@ from pyasic_api import get, post
 desc = """
 # Pyasic API
 Pyasic API is a REST API implementation of the functions exposed by
-[`pyasic`](https://github.com/UpstreamData/pyasic), designed to make
+[pyasic](https://github.com/UpstreamData/pyasic), designed to make
 interacting with miners easier and more standard by moving all miner
 data through a central hub and cleaning it into a consistent format.
 """
