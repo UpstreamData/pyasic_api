@@ -13,13 +13,13 @@ tags_metadata = [
     {
         "name": "GET",
         "description": ("Items in the **GET** category are readable data, "
-        				"which mostly will be handled by `get_data` in pyasic."),
+                        "which mostly will be handled by `get_data` in pyasic."),
     },
     {
         "name": "POST",
-        "description": ("Items in the **POST** category are either writable commands on the miner,"
-        				"or are more advanced data functions, such as selecting specific data"
-						"from `get_data` or selecting data from groups of miners at a time."),
+        "description": ("Items in the **POST** category are either writable commands on the miner, "
+                        "or are more advanced data functions, such as selecting specific data "
+                        "from `get_data` or selecting data from groups of miners at a time."),
     },
 ]
 
