@@ -320,10 +320,31 @@ hostname_resp = {
 
 @router.get(
     "/{ip}/hostname",
-    description="Get the hostname of  a miner",
+    description="Get the hostname of a miner",
     responses=hostname_resp,
 )
 async def get_ip_hostname_data(ip):
     miner = await get_miner(ip)
     hn = await miner.get_hostname()
     return {"hostname": hn}
+
+
+model_resp = {
+    200: {
+        "description": "Success",
+        "content": {
+            "application/json": {"example": {"model": "S9 (BOS)"}}
+        },
+    }
+}
+
+
+@router.get(
+    "/{ip}/model",
+    description="Get the model of a miner",
+    responses=model_resp,
+)
+async def get_ip_model_data(ip):
+    miner = await get_miner(ip)
+    model = await miner.get_model()
+    return {"model": model}
