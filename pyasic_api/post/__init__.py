@@ -55,7 +55,7 @@ get_data_resp = {
         "description": "Malformed Constructor",
         "content": {
             "application/json": {
-                "example": {"detail": "Bad constructor string"}
+                "example": {"detail": "string"}
             }
         }
     },

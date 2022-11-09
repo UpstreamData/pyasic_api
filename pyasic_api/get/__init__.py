@@ -306,3 +306,24 @@ async def leds(ip, led_mode: LEDMode):
         if await miner.fault_light_off():
             return {"light_status": False}
         raise HTTPException(status_code=400, detail="Miner failed to deactivate LED.")
+
+
+hostname_resp = {
+    200: {
+        "description": "Success",
+        "content": {
+            "application/json": {"example": {"hostname": "miner-123456"}}
+        },
+    }
+}
+
+
+@router.get(
+    "/{ip}/hostname",
+    description="Get the hostname of  a miner",
+    responses=hostname_resp,
+)
+async def get_ip_hostname_data(ip):
+    miner = await get_miner(ip)
+    hn = await miner.get_hostname()
+    return {"hostname": hn}
