@@ -31,9 +31,7 @@ def _create_network(constructor) -> list:
     return hosts
 
 
-MinerDataSelector = Enum(
-    "MinerDataSelector", {f: f for f in MinerData.fields()}
-)
+MinerDataSelector = Enum("MinerDataSelector", {f: f for f in MinerData.fields()})
 
 
 class DataSelector(BaseModel):
@@ -41,7 +39,32 @@ class DataSelector(BaseModel):
     data_selectors: Union[List[MinerDataSelector], None] = None
 
 
-@router.post("/get_data/", summary="Get data from selected miners")
+get_data_resp = {
+    200: {
+        "description": "Success",
+        "content": {
+            "application/json": {
+                "example": {
+                    "1.1.1.1": MinerData("1.1.1.1").asdict(),
+                    "1.1.1.2": MinerData("1.1.1.2").asdict(),
+                }
+            }
+        }
+    },
+    400: {
+        "description": "Malformed Constructor",
+        "content": {
+            "application/json": {
+                "example": {"detail": "Bad constructor string"}
+            }
+        }
+    },
+}
+
+
+@router.post(
+    "/get_data/", summary="Get data from selected miners", responses=get_data_resp
+)
 async def get_data(data_selector: DataSelector):
     """Get data from all miners as defined by the selector.
 
@@ -58,10 +81,10 @@ async def get_data(data_selector: DataSelector):
     """
     try:
         hosts = create_hosts(data_selector.targets)
+        miners = await MinerNetwork(hosts).scan_network_for_miners()
     except ValueError:
         raise HTTPException(status_code=400, detail="Bad constructor string")
 
-    miners = await MinerNetwork(hosts).scan_network_for_miners()
     data = await asyncio.gather(*[miner.get_data() for miner in miners])
 
     ret_data = {}
