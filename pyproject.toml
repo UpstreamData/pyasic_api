@@ -7,8 +7,8 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-pyasic = "^0.19.0"
-fastapi = {extras = ["uvicorn"], version = "^0.85.2"}
+pyasic = "*"
+fastapi = {extras = ["uvicorn"], version = "^0.86"}
 uvicorn = "^0.19.0"
 
 [build-system]

@@ -1,6 +1,8 @@
-from pyasic import get_miner, MinerData
-from fastapi import APIRouter, HTTPException
 from enum import Enum
+
+from fastapi import APIRouter, HTTPException
+
+from pyasic import MinerData, get_miner
 
 
 class LEDMode(str, Enum):

@@ -1,11 +1,11 @@
 import asyncio
-from typing import Union, List
-
-from fastapi import HTTPException, APIRouter
-from pydantic import BaseModel
 from enum import Enum
+from typing import List, Union
 
-from pyasic import MinerNetwork, MinerData
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+
+from pyasic import MinerData, MinerNetwork
 
 router = APIRouter(tags=["POST"])
 
