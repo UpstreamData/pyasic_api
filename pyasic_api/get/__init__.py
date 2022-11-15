@@ -350,3 +350,24 @@ async def get_ip_model_data(ip):
     miner = await get_miner(ip)
     model = await miner.get_model()
     return {"model": model}
+
+
+reboot_resp = {
+    200: {
+        "description": "Success",
+        "content": {
+            "application/json": {"example": {"reboot": True}}
+        },
+    }
+}
+
+
+@router.get(
+    "/{ip}/reboot",
+    description="Reboot a miner",
+    responses=reboot_resp,
+)
+async def get_reboot(ip):
+    miner = await get_miner(ip)
+    reboot = await miner.reboot()
+    return {"reboot": reboot}
