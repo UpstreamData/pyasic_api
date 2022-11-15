@@ -384,7 +384,7 @@ stop_mining_resp = {
 
 
 @router.get(
-    "/{ip}/reboot",
+    "/{ip}/stop_mining",
     description="Stop a miner's mining process.",
     responses=stop_mining_resp,
 )
@@ -404,7 +404,7 @@ resume_mining_resp = {
 
 
 @router.get(
-    "/{ip}/reboot",
+    "/{ip}/resume_mining",
     description="Resume a miner's mining process.",
     responses=resume_mining_resp,
 )
@@ -412,3 +412,24 @@ async def get_resume_mining(ip):
     miner = await get_miner(ip)
     resume_mining = await miner.resume_mining()
     return {"resume_mining": resume_mining}
+
+
+restart_backend_resp = {
+    200: {
+        "description": "Success",
+        "content": {
+            "application/json": {"example": {"restart_backend": True}}
+        },
+    }
+}
+
+
+@router.get(
+    "/{ip}/restart_backend",
+    description="Restart a miner's mining process.",
+    responses=restart_backend_resp,
+)
+async def get_restart_backend(ip):
+    miner = await get_miner(ip)
+    restart_backend = await miner.restart_backend()
+    return {"restart_backend": restart_backend}
