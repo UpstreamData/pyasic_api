@@ -392,3 +392,23 @@ async def get_stop_mining(ip):
     miner = await get_miner(ip)
     stop_mining = await miner.stop_mining()
     return {"stop_mining": stop_mining}
+
+resume_mining_resp = {
+    200: {
+        "description": "Success",
+        "content": {
+            "application/json": {"example": {"resume_mining": True}}
+        },
+    }
+}
+
+
+@router.get(
+    "/{ip}/reboot",
+    description="Resume a miner's mining process.",
+    responses=resume_mining_resp,
+)
+async def get_resume_mining(ip):
+    miner = await get_miner(ip)
+    resume_mining = await miner.resume_mining()
+    return {"resume_mining": resume_mining}
