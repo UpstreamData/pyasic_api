@@ -43,7 +43,7 @@ async def get_pools_data(ip):
 @router.get(
     "/{ip}/config/", summary="Get config from one miner"
 )
-async def get_pools_data(ip):
+async def get_config(ip):
     miner = await get_miner(ip)
     data = await miner.get_config()
     return data.as_dict()
