@@ -32,6 +32,15 @@ async def get_ip_data(ip):
     return data.asdict()
 
 
+@router.get(
+    "/{ip}/pools/", summary="Get pools from one miner"
+)
+async def get_pools_data(ip):
+    miner = await get_miner(ip)
+    data = await miner.api.pools()
+    return data
+
+
 hashrate_resp = {
     200: {
         "description": "Success",
