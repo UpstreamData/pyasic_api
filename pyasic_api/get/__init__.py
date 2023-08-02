@@ -40,6 +40,14 @@ async def get_pools_data(ip):
     data = await miner.api.pools()
     return data
 
+@router.get(
+    "/{ip}/config/", summary="Get config from one miner"
+)
+async def get_pools_data(ip):
+    miner = await get_miner(ip)
+    data = await miner.get_config()
+    return data.as_dict()
+
 
 hashrate_resp = {
     200: {
