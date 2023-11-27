@@ -24,18 +24,14 @@ def create_hosts(ip_constructor) -> list:
 
 
 def _create_network(constructor) -> list:
-    if "-" in constructor:
-        hosts = MinerNetwork(constructor).hosts()
-    else:
-        hosts = [constructor]
-    return hosts
+    return MinerNetwork.from_address(constructor).hosts
 
 
 MinerDataSelector = Enum("MinerDataSelector", {f: f for f in MinerData.fields()})
 
 
 class DataSelector(BaseModel):
-    targets: Union[List[str], str] = "192.168.1.1-192.168.1.255"
+    targets: Union[List[str], str] = "192.168.1.1-255"
     data_selectors: Union[List[MinerDataSelector], None] = None
 
 
@@ -49,15 +45,11 @@ get_data_resp = {
                     "1.1.1.2": MinerData("1.1.1.2").asdict(),
                 }
             }
-        }
+        },
     },
     400: {
         "description": "Malformed Constructor",
-        "content": {
-            "application/json": {
-                "example": {"detail": "string"}
-            }
-        }
+        "content": {"application/json": {"example": {"detail": "string"}}},
     },
 }
 
@@ -81,7 +73,7 @@ async def get_data(data_selector: DataSelector):
     """
     try:
         hosts = create_hosts(data_selector.targets)
-        miners = await MinerNetwork(hosts).scan_network_for_miners()
+        miners = await MinerNetwork(hosts).scan()
     except ValueError:
         raise HTTPException(status_code=400, detail="Bad constructor string")
 
