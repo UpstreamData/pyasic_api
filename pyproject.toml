@@ -6,7 +6,7 @@ authors = ["UpstreamData <brett@upstreamdata.ca>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 pyasic = "*"
 fastapi = {version = "^0.95.2"}
 uvicorn = "^0.21.1"

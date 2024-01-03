@@ -32,17 +32,14 @@ async def get_ip_data(ip):
     return data.asdict()
 
 
-@router.get(
-    "/{ip}/pools/", summary="Get pools from one miner"
-)
+@router.get("/{ip}/pools/", summary="Get pools from one miner")
 async def get_pools_data(ip):
     miner = await get_miner(ip)
     data = await miner.api.pools()
     return data
 
-@router.get(
-    "/{ip}/config/", summary="Get config from one miner"
-)
+
+@router.get("/{ip}/config/", summary="Get config from one miner")
 async def get_config(ip):
     miner = await get_miner(ip)
     data = await miner.get_config()
@@ -222,7 +219,7 @@ chips_resp = {
                             "chips": 0,
                         },
                     ],
-                    "ideal_chips": 330,
+                    "expected_chips": 330,
                     "total_chips": 220,
                 }
             }
@@ -242,7 +239,7 @@ async def get_ip_chips_data(ip):
         "center_chips": data.center_chips,
         "right_chips": data.right_chips,
         "total_chips": data.total_chips,
-        "ideal_chips": data.ideal_chips,
+        "expected_chips": data.expected_chips,
     }
 
 
@@ -330,9 +327,7 @@ async def leds(ip, led_mode: LEDMode):
 hostname_resp = {
     200: {
         "description": "Success",
-        "content": {
-            "application/json": {"example": {"hostname": "miner-123456"}}
-        },
+        "content": {"application/json": {"example": {"hostname": "miner-123456"}}},
     }
 }
 
@@ -351,9 +346,7 @@ async def get_ip_hostname_data(ip):
 model_resp = {
     200: {
         "description": "Success",
-        "content": {
-            "application/json": {"example": {"model": "S9 (BOS)"}}
-        },
+        "content": {"application/json": {"example": {"model": "S9 (BOS)"}}},
     }
 }
 
@@ -372,9 +365,7 @@ async def get_ip_model_data(ip):
 reboot_resp = {
     200: {
         "description": "Success",
-        "content": {
-            "application/json": {"example": {"reboot": True}}
-        },
+        "content": {"application/json": {"example": {"reboot": True}}},
     }
 }
 
@@ -393,9 +384,7 @@ async def get_reboot(ip):
 stop_mining_resp = {
     200: {
         "description": "Success",
-        "content": {
-            "application/json": {"example": {"stop_mining": True}}
-        },
+        "content": {"application/json": {"example": {"stop_mining": True}}},
     }
 }
 
@@ -410,12 +399,11 @@ async def get_stop_mining(ip):
     stop_mining = await miner.stop_mining()
     return {"stop_mining": stop_mining}
 
+
 resume_mining_resp = {
     200: {
         "description": "Success",
-        "content": {
-            "application/json": {"example": {"resume_mining": True}}
-        },
+        "content": {"application/json": {"example": {"resume_mining": True}}},
     }
 }
 
@@ -434,9 +422,7 @@ async def get_resume_mining(ip):
 restart_backend_resp = {
     200: {
         "description": "Success",
-        "content": {
-            "application/json": {"example": {"restart_backend": True}}
-        },
+        "content": {"application/json": {"example": {"restart_backend": True}}},
     }
 }
 
